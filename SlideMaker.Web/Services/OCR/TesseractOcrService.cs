@@ -78,6 +78,14 @@ public class TesseractOcrService : IOcrService
     /// </summary>
     private static byte[] NormalizeExifOrientation(byte[] imageBytes)
     {
+        // System.Drawing.Common is Windows-only on modern .NET. Tesseract can
+        // still process the original bytes on Linux; only EXIF normalization is
+        // skipped there.
+        if (!OperatingSystem.IsWindows())
+        {
+            return imageBytes;
+        }
+
         const int orientationPropertyId = 0x0112;
 
         using var inputStream = new MemoryStream(imageBytes);
