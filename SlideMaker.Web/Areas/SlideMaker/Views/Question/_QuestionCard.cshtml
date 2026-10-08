@@ -1,0 +1,66 @@
+@model QuestionCardViewModel
+
+<div class="card question-card mb-3" data-id="@Model.Id">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Question <span class="q-number">@Model.SortOrder</span></span>
+        <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-outline-secondary" data-action="move-up" title="Move Up"><i class="bi bi-arrow-up"></i></button>
+            <button type="button" class="btn btn-outline-secondary" data-action="move-down" title="Move Down"><i class="bi bi-arrow-down"></i></button>
+            <button type="button" class="btn btn-outline-secondary" data-action="duplicate" title="Duplicate"><i class="bi bi-copy"></i></button>
+            <button type="button" class="btn btn-outline-secondary" data-action="split" title="Split"><i class="bi bi-scissors"></i></button>
+            <button type="button" class="btn btn-outline-secondary" data-action="merge" title="Merge with next"><i class="bi bi-union"></i></button>
+            <button type="button" class="btn btn-outline-secondary" data-action="regenerate" title="Regenerate with AI"><i class="bi bi-arrow-repeat"></i></button>
+            <button type="button" class="btn btn-outline-danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <input type="hidden" class="q-field" data-field="SortOrder" value="@Model.SortOrder" />
+        <div class="mb-2">
+            <label class="form-label small text-muted mb-1">Question Text</label>
+            <textarea class="form-control q-field" data-field="QuestionText" rows="2">@Model.QuestionText</textarea>
+        </div>
+        <div class="row g-2 mb-2">
+            @for (var i = 0; i < 4; i++)
+            {
+                var opt = i < Model.Options.Count ? Model.Options[i] : new QuestionOptionViewModel { Label = ((char)('A' + i)).ToString() };
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text opt-label">@opt.Label</span>
+                        <input class="form-control q-field" data-field="Option" data-label="@opt.Label" value="@opt.Text" />
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Answer</label>
+                <input class="form-control form-control-sm q-field" data-field="CorrectAnswer" value="@Model.CorrectAnswer" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Difficulty</label>
+                <select class="form-select form-select-sm q-field" data-field="Difficulty">
+                    @foreach (var d in Enum.GetValues<DifficultyLevel>())
+                    {
+                        <option value="@d" selected="@(d == Model.Difficulty)">@d</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Language</label>
+                <select class="form-select form-select-sm q-field" data-field="Language">
+                    @foreach (var l in Enum.GetValues<ContentLanguage>())
+                    {
+                        <option value="@l" selected="@(l == Model.Language)">@l</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-sm btn-success w-100" data-action="save"><i class="bi bi-check-lg me-1"></i>Save</button>
+            </div>
+        </div>
+        <div>
+            <label class="form-label small text-muted mb-1">Explanation</label>
+            <textarea class="form-control q-field" data-field="Explanation" rows="2">@Model.Explanation</textarea>
+        </div>
+    </div>
+</div>

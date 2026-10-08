@@ -1,0 +1,42 @@
+@model CreatePresentationViewModel
+@{
+    ViewData["Title"] = "Create Presentation";
+}
+
+<h3 class="mb-4">Create Presentation</h3>
+
+<div class="card dashboard-card" style="max-width:640px;">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger small"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Presentation Name</label>
+                <input class="form-control" name="Name" value="@Model.Name" placeholder="e.g. Class 10 Science - Life Processes MCQs" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description (optional)</label>
+                <textarea class="form-control" name="Description">@Model.Description</textarea>
+            </div>
+
+            <label class="form-label d-block">How would you like to create it?</label>
+            <div class="list-group mb-3">
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="SourceMode" value="upload" checked="@(Model.SourceMode == "upload")" />
+                    <span><strong>Upload Question Screenshot(s)</strong><br /><span class="text-muted small">Upload one or more images; questions are extracted automatically via OCR.</span></span>
+                </label>
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="SourceMode" value="ai" checked="@(Model.SourceMode == "ai")" />
+                    <span><strong>AI Generate Questions</strong><br /><span class="text-muted small">Describe the subject/chapter/topic and let AI generate MCQs.</span></span>
+                </label>
+                <label class="list-group-item d-flex gap-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="SourceMode" value="bank" checked="@(Model.SourceMode == "bank")" />
+                    <span><strong>Pick From Question Bank</strong><br /><span class="text-muted small">Search and reuse previously saved/generated questions.</span></span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Continue <i class="bi bi-arrow-right ms-1"></i></button>
+        </form>
+    </div>
+</div>

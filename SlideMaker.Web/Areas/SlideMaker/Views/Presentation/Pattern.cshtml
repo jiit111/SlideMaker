@@ -1,0 +1,108 @@
+@model ChoosePatternViewModel
+@{
+    ViewData["Title"] = "Choose Template & Pattern";
+}
+
+<h3 class="mb-3">Choose Template &amp; Slide Pattern</h3>
+<p class="text-muted">@Model.QuestionCount question(s) selected.</p>
+
+<form asp-action="Pattern" method="post" class="row g-4">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="PresentationId" />
+    <input type="hidden" asp-for="QuestionIdsCsv" />
+
+    <div class="col-md-6">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-white fw-semibold">Template</div>
+            <div class="card-body">
+                @if (Model.AvailableTemplates.Count == 0)
+                {
+                    <div class="empty-state py-3">No templates available. <a asp-controller="Template" asp-action="Create">Create one</a>.</div>
+                }
+                else
+                {
+                    foreach (var t in Model.AvailableTemplates)
+                    {
+                        <label class="list-group-item d-flex gap-2 mb-2 border rounded p-2">
+                            <input class="form-check-input flex-shrink-0" type="radio" name="TemplateId" value="@t.Id" checked="@(t.Id == Model.TemplateId)" />
+                            <span>@t.Name @if (t.IsDefault) { <span class="badge bg-primary ms-1">Default</span> }</span>
+                        </label>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card dashboard-card h-100">
+            <div class="card-header bg-white fw-semibold">Slide Pattern</div>
+            <div class="card-body">
+                <label class="list-group-item d-flex gap-2 mb-2 border rounded p-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="Pattern" value="OneQuestionPerSlide" checked="@(Model.Pattern == SlidePattern.OneQuestionPerSlide)" />
+                    <span><strong>One Question Per Slide</strong><br /><span class="text-muted small">Just the question and options, no answer.</span></span>
+                </label>
+                <label class="list-group-item d-flex gap-2 mb-2 border rounded p-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="Pattern" value="QuestionAndAnswerSameSlide" checked="@(Model.Pattern == SlidePattern.QuestionAndAnswerSameSlide)" />
+                    <span><strong>Question + Answer on Same Slide</strong></span>
+                </label>
+                <label class="list-group-item d-flex gap-2 mb-2 border rounded p-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="Pattern" value="QuestionThenSolution" checked="@(Model.Pattern == SlidePattern.QuestionThenSolution)" />
+                    <span><strong>Question Slide, Then Solution Slide</strong></span>
+                </label>
+                <label class="list-group-item d-flex gap-2 mb-2 border rounded p-2">
+                    <input class="form-check-input flex-shrink-0" type="radio" name="Pattern" value="MultipleQuestionsPerSlide" checked="@(Model.Pattern == SlidePattern.MultipleQuestionsPerSlide)" />
+                    <span><strong>Multiple Questions Per Slide</strong><br /><span class="text-muted small">Compact overview, 4 questions per slide.</span></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-header bg-white fw-semibold"><i class="bi bi-badge-ad me-1"></i>Header, Calendar &amp; Announcements</div>
+            <div class="card-body">
+                <p class="text-muted small">This appears on <strong>every slide</strong> — a professional header band (academy + class), today's special day, and any message/credit you add below.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Academy Name</label>
+                        <input class="form-control" asp-for="AcademyName" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Class</label>
+                        <input class="form-control" asp-for="ClassName" placeholder="e.g. Class 10" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="bi bi-calendar-event me-1"></i>Date</label>
+                        <input type="date" class="form-control" id="eventDateInput" asp-for="EventDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Special Day / Festival</label>
+                        <input class="form-control" id="festivalNameInput" asp-for="FestivalName" placeholder="e.g. Holi, Diwali... (auto-suggested, editable)" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Message Banner (appears on every slide)</label>
+                        <div class="input-group">
+                            <textarea class="form-control" id="headerMessageInput" asp-for="HeaderMessage" rows="2" placeholder="e.g. Happy Holi! Wishing you a colourful year ahead."></textarea>
+                            <button type="button" class="btn btn-outline-secondary mic-btn" data-mic-for="headerMessageInput" title="Speak"><i class="bi bi-mic"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Instructor Credit (optional, appears on every slide)</label>
+                        <div class="input-group">
+                            <input class="form-control" id="instructorCreditInput" asp-for="InstructorCredit" placeholder="e.g. Math By Shubham Sir, Science By Akash Sir" />
+                            <button type="button" class="btn btn-outline-secondary mic-btn" data-mic-for="instructorCreditInput" title="Speak"><i class="bi bi-mic"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-magic me-1"></i>Generate Slides</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/js/pattern-branding.js" asp-append-version="true"></script>
+}

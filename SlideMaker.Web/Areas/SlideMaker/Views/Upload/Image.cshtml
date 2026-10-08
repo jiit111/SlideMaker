@@ -1,0 +1,38 @@
+@model UploadImageViewModel
+@{
+    ViewData["Title"] = "Upload Question Screenshot";
+}
+
+<h3 class="mb-3">Upload Question Screenshot(s)</h3>
+<p class="text-muted">Upload one or more images containing questions (JPG, JPEG, PNG, WEBP). Text is extracted automatically and you can correct it on the next screen.</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning">@Model.ErrorMessage</div>
+}
+
+<div class="card dashboard-card" style="max-width:640px;">
+    <div class="card-body">
+        <form asp-action="Image" method="post" enctype="multipart/form-data" id="uploadForm" data-no-loader>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="presentationId" value="@Model.PresentationId" />
+
+            <div class="border border-2 border-dashed rounded p-4 text-center mb-3" id="dropZone">
+                <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                <p class="mb-2">Drag &amp; drop images here, or click to choose</p>
+                <input type="file" name="files" id="fileInput" accept=".jpg,.jpeg,.png,.webp" multiple class="form-control" />
+            </div>
+
+            <div class="progress mb-3 d-none" id="uploadProgressWrap">
+                <div class="progress-bar" id="uploadProgressBar" style="width:0%">0%</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="uploadSubmitBtn"><i class="bi bi-upload me-1"></i>Upload &amp; Extract</button>
+            <a class="btn btn-outline-secondary" asp-controller="Question" asp-action="Review" asp-route-presentationId="@Model.PresentationId" asp-route-ids="">Skip &amp; enter manually</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/upload.js" asp-append-version="true"></script>
+}

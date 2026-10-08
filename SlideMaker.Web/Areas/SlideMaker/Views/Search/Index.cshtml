@@ -1,0 +1,51 @@
+@using SlideMaker.Web.Services.Search
+@model SearchResults
+@{
+    ViewData["Title"] = "Search";
+    var term = ViewBag.Term as string;
+}
+
+<h3 class="mb-3">Search</h3>
+
+<form method="get" class="mb-4" style="max-width:480px;">
+    <div class="input-group">
+        <input type="search" id="searchPageInput" name="q" class="form-control" value="@term" placeholder="Search anything..." />
+        <button class="btn btn-outline-secondary mic-btn" type="button" data-mic-for="searchPageInput"><i class="bi bi-mic"></i></button>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+    </div>
+</form>
+
+@if (string.IsNullOrWhiteSpace(term))
+{
+    <div class="empty-state"><i class="bi bi-search fs-1 d-block mb-2"></i>Type something to search across questions, templates and presentations.</div>
+}
+else if (Model.Questions.Count == 0 && Model.Templates.Count == 0 && Model.Presentations.Count == 0)
+{
+    <div class="empty-state"><i class="bi bi-emoji-frown fs-1 d-block mb-2"></i>No results for "@term".</div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-md-4">
+            <h6>Questions</h6>
+            @foreach (var r in Model.Questions)
+            {
+                <a class="d-block border-bottom py-2 text-decoration-none" href="@r.Url">@r.Title<div class="text-muted small">@r.Subtitle</div></a>
+            }
+        </div>
+        <div class="col-md-4">
+            <h6>Templates</h6>
+            @foreach (var r in Model.Templates)
+            {
+                <a class="d-block border-bottom py-2 text-decoration-none" href="@r.Url">@r.Title<div class="text-muted small">@r.Subtitle</div></a>
+            }
+        </div>
+        <div class="col-md-4">
+            <h6>Presentations</h6>
+            @foreach (var r in Model.Presentations)
+            {
+                <a class="d-block border-bottom py-2 text-decoration-none" href="@r.Url">@r.Title<div class="text-muted small">@r.Subtitle</div></a>
+            }
+        </div>
+    </div>
+}

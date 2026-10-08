@@ -1,0 +1,104 @@
+@model PresentationPreviewViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h3 class="mb-0">@Model.Name</h3>
+        <div class="text-muted small">@Model.Slides.Count slide(s) &middot; Template: @(Model.TemplateName ?? "-") &middot; Pattern: @Model.SlidePattern</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-action="Export" asp-route-id="@Model.Id"><i class="bi bi-filetype-html me-1"></i>Download HTML</a>
+        <a class="btn btn-outline-secondary" asp-action="ExportPptx" asp-route-id="@Model.Id"><i class="bi bi-filetype-pptx me-1"></i>Download PPTX</a>
+        <form asp-action="Save" asp-route-id="@Model.Id" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-success"><i class="bi bi-check2-circle me-1"></i>Save</button>
+        </form>
+        <form asp-action="Duplicate" asp-route-id="@Model.Id" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-copy"></i></button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Slides.Count == 0)
+{
+    <div class="empty-state"><i class="bi bi-collection-play fs-1 d-block mb-2"></i>No slides generated yet.</div>
+}
+else
+{
+    <div class="mb-3" id="slideStageHost">
+        @for (var i = 0; i < Model.Slides.Count; i++)
+        {
+            <div class="slide-frame" data-index="@i" style="@(i == 0 ? "" : "display:none;")">
+                <partial name="_SlideStage" model="Model.Slides[i]" />
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+        <button type="button" class="btn btn-outline-primary" id="prevSlideBtn"><i class="bi bi-chevron-left"></i> Previous</button>
+        <span><span id="slidePositionLabel">1</span> / @Model.Slides.Count</span>
+        <button type="button" class="btn btn-outline-primary" id="nextSlideBtn">Next <i class="bi bi-chevron-right"></i></button>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2 mb-5" id="slideActionBar">
+        <button type="button" class="btn btn-sm btn-primary" id="editSlideBtn" data-bs-toggle="modal" data-bs-target="#editSlideModal">
+            <i class="bi bi-pencil-square"></i> Edit Slide
+        </button>
+        <form asp-action="MoveSlide" method="post" class="d-inline slide-action-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="presentationId" value="@Model.Id" />
+            <input type="hidden" name="slideId" class="current-slide-id" />
+            <input type="hidden" name="up" value="true" />
+            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-up"></i> Move Up</button>
+        </form>
+        <form asp-action="MoveSlide" method="post" class="d-inline slide-action-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="presentationId" value="@Model.Id" />
+            <input type="hidden" name="slideId" class="current-slide-id" />
+            <input type="hidden" name="up" value="false" />
+            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-down"></i> Move Down</button>
+        </form>
+        <form asp-action="DuplicateSlide" method="post" class="d-inline slide-action-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="presentationId" value="@Model.Id" />
+            <input type="hidden" name="slideId" class="current-slide-id" />
+            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-copy"></i> Duplicate Slide</button>
+        </form>
+        <form asp-action="DeleteSlide" method="post" class="d-inline slide-action-form" onsubmit="return confirm('Delete this slide?');">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="presentationId" value="@Model.Id" />
+            <input type="hidden" name="slideId" class="current-slide-id" />
+            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete Slide</button>
+        </form>
+    </div>
+
+    <div class="modal fade" id="editSlideModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-1"></i>Edit This Slide</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="editSlideBody">
+                    <p class="text-muted small">Loading...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="editSlideSaveBtn"><i class="bi bi-check-lg me-1"></i>Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        window.SLIDE_IDS = @Html.Raw(Json.Serialize(Model.Slides.Select(s => s.Id).ToList()));
+        window.PRESENTATION_ID = @Model.Id;
+    </script>
+    <script src="~/js/presentation-preview.js" asp-append-version="true"></script>
+    <script src="~/js/slide-edit.js" asp-append-version="true"></script>
+}

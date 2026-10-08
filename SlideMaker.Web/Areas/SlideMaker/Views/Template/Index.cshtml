@@ -1,0 +1,62 @@
+@model TemplateListViewModel
+@{
+    ViewData["Title"] = "My Templates";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">My Templates</h3>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" asp-action="Upload"><i class="bi bi-upload me-1"></i>Upload Template</a>
+        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-circle me-1"></i>New Template</a>
+    </div>
+</div>
+
+@if (Model.Templates.Count == 0)
+{
+    <div class="empty-state"><i class="bi bi-layout-text-window fs-1 d-block mb-2"></i>No templates yet.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var t in Model.Templates)
+        {
+            <div class="col-md-4 col-lg-3">
+                <div class="card dashboard-card h-100">
+                    @if (!string.IsNullOrEmpty(t.PreviewImagePath))
+                    {
+                        <div class="template-preview-thumb p-0 overflow-hidden">
+                            <img src="@t.PreviewImagePath" alt="@t.Name preview" style="width:100%; height:100%; object-fit:cover;" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="template-preview-thumb"><i class="bi bi-file-earmark-slides"></i></div>
+                    }
+                    <div class="card-body">
+                        <div class="fw-semibold">@t.Name @if (t.IsDefault) { <span class="badge bg-primary ms-1">Default</span> }</div>
+                        <div class="text-muted small mb-2">@t.Description</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a class="btn btn-sm btn-primary" asp-controller="Presentation" asp-action="Create" asp-route-mode="ai">Use</a>
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@t.Id">Edit</a>
+                            <form asp-action="Duplicate" asp-route-id="@t.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-copy"></i></button>
+                            </form>
+                            @if (!t.IsDefault)
+                            {
+                                <form asp-action="SetDefault" asp-route-id="@t.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Set Default</button>
+                                </form>
+                            }
+                            <form asp-action="Delete" asp-route-id="@t.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this template?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

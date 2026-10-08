@@ -1,0 +1,71 @@
+@model AIGenerateViewModel
+@{
+    ViewData["Title"] = "Generate Questions with AI";
+}
+
+<h3 class="mb-3">Generate Questions with AI</h3>
+
+@if (Model.ValidationErrors is { Count: > 0 })
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var err in Model.ValidationErrors)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="card dashboard-card" style="max-width:720px;">
+    <div class="card-body">
+        <form asp-action="Generate" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="PresentationId" />
+
+            <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Subject</label>
+                    <input class="form-control" asp-for="Subject" placeholder="e.g. Science" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Class / Level</label>
+                    <input class="form-control" asp-for="ClassLevel" placeholder="e.g. Class 10" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Chapter</label>
+                    <input class="form-control" asp-for="Chapter" placeholder="e.g. Life Processes" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Topic (optional)</label>
+                    <input class="form-control" asp-for="Topic" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Number of Questions</label>
+                    <input class="form-control" type="number" min="1" max="50" asp-for="NumberOfQuestions" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Difficulty</label>
+                    <select class="form-select" asp-for="Difficulty" asp-items="Html.GetEnumSelectList<DifficultyLevel>()"></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Language</label>
+                    <select class="form-select" asp-for="Language" asp-items="Html.GetEnumSelectList<ContentLanguage>()"></select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Question Type</label>
+                    <select class="form-select" asp-for="QuestionType" asp-items="Html.GetEnumSelectList<QuestionType>()"></select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Additional Instruction</label>
+                    <div class="input-group">
+                        <textarea class="form-control" id="additionalInstruction" asp-for="AdditionalInstruction" placeholder="e.g. Suitable for competitive exam preparation"></textarea>
+                        <button type="button" class="btn btn-outline-secondary mic-btn" data-mic-for="additionalInstruction" title="Speak"><i class="bi bi-mic"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-magic me-1"></i>Generate Questions</button>
+        </form>
+    </div>
+</div>

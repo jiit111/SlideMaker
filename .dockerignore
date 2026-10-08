@@ -1,0 +1,18 @@
+.dockerignore
+.git
+.gitignore
+.vs
+.vscode
+**/.DS_Store
+**/bin
+**/obj
+**/*.user
+**/*.suo
+**/*.log
+.env
+.env.*
+Dockerfile*
+README.md
+
+# Do not bake local/user uploads into the deployment image.
+SlideMaker.Web/wwwroot/uploads

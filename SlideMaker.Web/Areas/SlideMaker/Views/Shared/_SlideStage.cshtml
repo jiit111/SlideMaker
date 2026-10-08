@@ -1,0 +1,19 @@
+@using SlideMaker.Web.Models
+@using SlideMaker.Web.Services.Export
+@model SlideViewModel
+@{
+    var editableTypes = new HashSet<SlideElementType>
+    {
+        SlideElementType.QuestionText, SlideElementType.OptionsList, SlideElementType.AnswerText, SlideElementType.ExplanationText
+    };
+}
+
+<div class="slide-stage" style="background:@(Model.Background ?? "#ffffff");">
+    @foreach (var el in Model.Elements)
+    {
+        var style = SlideElementStyleHelper.BuildStyle(el.PositionX, el.PositionY, el.Width, el.Height,
+            el.FontSize, el.FontFamily, el.Alignment, el.TextColor, el.Background, el.BorderRadius, el.Padding, el.Bold);
+        var isEditable = editableTypes.Contains(el.ElementType);
+        <div class="el" style="@style" data-element-id="@el.Id" data-element-type="@el.ElementType" data-editable="@(isEditable ? "true" : "false")">@el.Content</div>
+    }
+</div>

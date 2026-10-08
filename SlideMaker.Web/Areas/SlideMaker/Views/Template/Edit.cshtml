@@ -1,0 +1,41 @@
+@model TemplateFormViewModel
+@{
+    ViewData["Title"] = Model.Id == 0 ? "New Template" : "Edit Template";
+}
+
+<h3 class="mb-4">@ViewData["Title"]</h3>
+
+<div class="card dashboard-card" style="max-width:720px;">
+    <div class="card-body">
+        <form asp-action="Save" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="text-danger small"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Template Name</label>
+                <input class="form-control" asp-for="Name" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" asp-for="Description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Layout (JSON)</label>
+                <textarea class="form-control font-monospace" rows="16" asp-for="LayoutJson"></textarea>
+                <div class="form-text">
+                    Controls the look of every generated slide. Content (questions/options) stays separate and is applied at generation time.
+                    <strong>Fields:</strong> <code>background</code> (slide background — hex, rgba, or a full CSS gradient string),
+                    <code>textColor</code>, <code>accentColor</code>, <code>fontFamily</code>, <code>titleFontSize</code>, <code>bodyFontSize</code>,
+                    <code>questionBackground</code> / <code>optionsBackground</code> / <code>answerBackground</code> / <code>explanationBackground</code>
+                    (card panel behind each region — omit for plain text), <code>answerTextColor</code>, <code>borderRadius</code>, <code>cardPadding</code>,
+                    and the <code>questionPosition</code> / <code>optionsPosition</code> / <code>answerPosition</code> / <code>explanationPosition</code>
+                    regions (<code>x</code>/<code>y</code>/<code>width</code>/<code>height</code> as % of the slide).
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Template</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+        </form>
+    </div>
+</div>

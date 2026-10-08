@@ -1,0 +1,31 @@
+@model QuestionReviewViewModel
+@{
+    ViewData["Title"] = "Review Questions";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Review Extracted Questions</h3>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary" id="addQuestionBtn"><i class="bi bi-plus-lg me-1"></i>Add Question</button>
+        <button type="button" class="btn btn-primary" id="continueBtn"><i class="bi bi-arrow-right me-1"></i>Continue to Template &amp; Pattern</button>
+    </div>
+</div>
+<p class="text-muted">Correct any OCR/AI mistakes before generating slides. Changes save per card.</p>
+
+@Html.AntiForgeryToken()
+<input type="hidden" id="presentationId" value="@Model.PresentationId" />
+
+<div id="questionList">
+    @foreach (var q in Model.Questions)
+    {
+        <partial name="_QuestionCard" model="q" />
+    }
+</div>
+
+<div id="emptyState" class="empty-state @(Model.Questions.Count > 0 ? "d-none" : "")">
+    <i class="bi bi-card-list fs-1 d-block mb-2"></i>No questions yet. Click "Add Question" to start typing manually.
+</div>
+
+@section Scripts {
+    <script src="~/js/question-review.js" asp-append-version="true"></script>
+}

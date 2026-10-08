@@ -1,0 +1,72 @@
+@model QuestionBankPickerViewModel
+@{
+    ViewData["Title"] = "Question Bank";
+}
+
+<h3 class="mb-3">Question Bank</h3>
+
+<form method="get" class="row g-2 mb-3">
+    <input type="hidden" name="presentationId" value="@Model.PresentationId" />
+    <div class="col-md-5">
+        <input class="form-control" name="term" value="@Model.SearchTerm" placeholder="Search question text..." />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" name="subjectId">
+            <option value="">All subjects</option>
+            @foreach (var s in Model.Subjects)
+            {
+                <option value="@s.Id" selected="@(s.Id == Model.SubjectId)">@s.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Search</button>
+    </div>
+</form>
+
+@if (Model.PresentationId > 0)
+{
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" id="continueWithSelectedBtn"><i class="bi bi-arrow-right me-1"></i>Continue With Selected</button>
+    </div>
+}
+
+@if (Model.Results.Count == 0)
+{
+    <div class="empty-state"><i class="bi bi-inbox fs-1 d-block mb-2"></i>No questions found.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle bg-white">
+            <thead><tr><th style="width:40px;"></th><th>Question</th><th>Answer</th><th>Difficulty</th></tr></thead>
+            <tbody>
+            @foreach (var q in Model.Results)
+            {
+                <tr>
+                    <td><input type="checkbox" class="form-check-input question-pick" value="@q.Id" /></td>
+                    <td>@q.QuestionText</td>
+                    <td>@q.CorrectAnswer</td>
+                    <td>@q.Difficulty</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        var continueBtn = document.getElementById("continueWithSelectedBtn");
+        if (continueBtn) {
+            continueBtn.addEventListener("click", function () {
+                var ids = Array.from(document.querySelectorAll(".question-pick:checked")).map(function (c) { return c.value; });
+                if (ids.length === 0) {
+                    window.SlideMaker.showToast("Select at least one question.", "danger");
+                    return;
+                }
+                window.location.href = "/SlideMaker/Question/Review?presentationId=@Model.PresentationId&ids=" + ids.join(",");
+            });
+        }
+    </script>
+}

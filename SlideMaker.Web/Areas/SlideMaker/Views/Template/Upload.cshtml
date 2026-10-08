@@ -1,0 +1,44 @@
+@model TemplateUploadViewModel
+@{
+    ViewData["Title"] = "Upload Template";
+}
+
+<h3 class="mb-3">Upload Template</h3>
+<p class="text-muted">Upload an existing slide/template — a preview image (screenshot of the design) and/or the original file (e.g. PPTX). It's added to your template library right away with a default layout; you can fine-tune the layout afterwards from <strong>Edit</strong>.</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning">@Model.ErrorMessage</div>
+}
+
+<div class="card dashboard-card" style="max-width:640px;">
+    <div class="card-body">
+        <form asp-action="Upload" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">Template Name</label>
+                <input class="form-control" name="Name" value="@Model.Name" placeholder="e.g. MyTemplate" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description (optional)</label>
+                <textarea class="form-control" name="Description">@Model.Description</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Preview Image</label>
+                <input type="file" name="previewImage" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+                <div class="form-text">Shown as the template's thumbnail in the library.</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Template File (optional)</label>
+                <input type="file" name="templateFile" class="form-control" accept=".pptx" />
+                <div class="form-text">Stored for future use; automatic PPTX layout parsing is coming in a later phase.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="bi bi-upload me-1"></i>Upload Template</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+        </form>
+    </div>
+</div>
